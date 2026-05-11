@@ -6,36 +6,24 @@ struct FriendRequestsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                AuroraBackground().opacity(0.5)
-
+            Group {
                 if friendsVM.pendingRequests.isEmpty {
                     VStack(spacing: Theme.s3) {
-                        ZStack {
-                            Circle()
-                                .fill(Theme.auroraGradient.opacity(0.15))
-                                .frame(width: 100, height: 100)
-                            Image(systemName: "tray")
-                                .font(.system(size: 36))
-                                .foregroundStyle(Theme.sunsetGradient)
-                        }
+                        Image(systemName: "tray")
+                            .font(.system(size: 36, weight: .light))
+                            .foregroundStyle(Theme.muted)
                         Text("Нет заявок")
                             .font(.titleStrong)
-                        Text("Новые заявки появятся здесь")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView {
-                        VStack(spacing: Theme.s3) {
+                        VStack(spacing: Theme.s2) {
                             ForEach(friendsVM.pendingRequests) { request in
                                 requestRow(request)
-                                    .transition(.scale(scale: 0.95).combined(with: .opacity))
                             }
                         }
                         .padding(Theme.s4)
-                        .animation(.spring(response: 0.4, dampingFraction: 0.75),
-                                   value: friendsVM.pendingRequests.map(\.id))
                     }
                 }
             }
@@ -48,11 +36,10 @@ struct FriendRequestsView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.secondary)
-                            .padding(8)
-                            .background(Circle().fill(Color.primary.opacity(0.08)))
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.muted)
                     }
+                    .buttonStyle(IconButtonStyle())
                 }
             }
         }
@@ -60,21 +47,21 @@ struct FriendRequestsView: View {
 
     private func requestRow(_ request: FriendRequest) -> some View {
         HStack(spacing: Theme.s3) {
-            ZStack {
-                Circle()
-                    .fill(Theme.auroraGradient)
-                    .frame(width: 48, height: 48)
-                Text(String(request.fromUsername.prefix(1)).uppercased())
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-            }
+            Circle()
+                .fill(Theme.card)
+                .overlay(Circle().stroke(Theme.border, lineWidth: 1))
+                .frame(width: 44, height: 44)
+                .overlay(
+                    Text(String(request.fromUsername.prefix(1)).uppercased())
+                        .font(.system(size: 18, weight: .bold))
+                )
 
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text("@" + request.fromUsername)
                     .font(.bodyStrong)
                 Text("хочет добавить тебя")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.muted)
             }
 
             Spacer()
@@ -84,25 +71,31 @@ struct FriendRequestsView: View {
                     Haptics.success()
                     Task { await friendsVM.accept(request: request) }
                 } label: {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .bold))
+                    Text("Принять")
+                        .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
-                        .background(Circle().fill(Theme.mint))
+                        .padding(.horizontal, 12)
+                        .frame(height: 32)
+                        .background(RoundedRectangle(cornerRadius: Theme.rSm).fill(Theme.accent))
                 }
+                .buttonStyle(IconButtonStyle())
 
                 Button {
                     Haptics.warning()
                     Task { await friendsVM.decline(request: request) }
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.secondary)
-                        .frame(width: 36, height: 36)
-                        .background(Circle().fill(Color.primary.opacity(0.08)))
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(Theme.muted)
+                        .frame(width: 32, height: 32)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: Theme.rSm)
+                                .stroke(Theme.border, lineWidth: 1)
+                        )
                 }
+                .buttonStyle(IconButtonStyle())
             }
         }
-        .glassCard(padding: Theme.s3)
+        .card(padding: Theme.s3)
     }
 }

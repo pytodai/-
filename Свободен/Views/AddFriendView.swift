@@ -11,96 +11,80 @@ struct AddFriendView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                AuroraBackground().opacity(0.6)
+            VStack(spacing: Theme.s4) {
+                Spacer(minLength: Theme.s5)
 
-                VStack(spacing: Theme.s5) {
-                    Spacer(minLength: 20)
+                if success {
+                    VStack(spacing: Theme.s3) {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundStyle(Theme.accent)
+                            .frame(width: 80, height: 80)
+                            .background(
+                                Circle()
+                                    .stroke(Theme.accent, lineWidth: 2)
+                            )
+                        Text("Заявка отправлена")
+                            .font(.titleStrong)
+                        Text("Жди, когда друг примет")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.muted)
+                    }
+                } else {
+                    VStack(spacing: Theme.s2) {
+                        Text("Добавить друга")
+                            .font(.titleStrong)
+                        Text("Введи логин")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.muted)
+                    }
+                    .padding(.bottom, Theme.s2)
 
-                    ZStack {
-                        Circle()
-                            .fill(Theme.auroraGradient.opacity(0.2))
-                            .frame(width: 130, height: 130)
-                            .blur(radius: 8)
-                        Circle()
-                            .fill(Theme.primaryGradient)
-                            .frame(width: 100, height: 100)
-                            .shadow(color: Theme.coral.opacity(0.4), radius: 18, x: 0, y: 10)
-                        Image(systemName: success ? "checkmark" : "person.badge.plus")
-                            .font(.system(size: 40, weight: .bold))
-                            .foregroundStyle(.white)
-                            .contentTransition(.symbolEffect(.replace))
+                    HStack(spacing: 6) {
+                        Text("@")
+                            .font(.bodyStrong)
+                            .foregroundStyle(Theme.muted)
+                        TextField("login", text: $username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .font(.bodyStrong)
+                            .focused($isFocused)
+                    }
+                    .padding(.horizontal, Theme.s4)
+                    .frame(height: 52)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.rMd, style: .continuous)
+                            .fill(Theme.card)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Theme.rMd, style: .continuous)
+                            .stroke(isFocused ? Theme.accent : Theme.border,
+                                    lineWidth: isFocused ? 1.5 : 1)
+                    )
+                    .padding(.horizontal, Theme.s5)
+
+                    if let error = errorMessage {
+                        Text(error)
+                            .font(.footnote)
+                            .foregroundStyle(Theme.danger)
                     }
 
-                    if success {
-                        VStack(spacing: Theme.s2) {
-                            Text("Заявка отправлена!")
-                                .font(.titleStrong)
-                            Text("Жди, когда друг примет")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        .transition(.scale.combined(with: .opacity))
-                    } else {
-                        VStack(spacing: Theme.s2) {
-                            Text("Добавить друга")
-                                .font(.titleStrong)
-                            Text("Введи логин")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        HStack(spacing: Theme.s3) {
-                            Text("@")
-                                .font(.bodyStrong)
-                                .foregroundStyle(Theme.coral)
-                            TextField("login", text: $username)
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
-                                .font(.bodyStrong)
-                                .focused($isFocused)
-                        }
-                        .padding(.horizontal, Theme.s4)
-                        .padding(.vertical, 14)
-                        .background(
-                            RoundedRectangle(cornerRadius: Theme.rMd, style: .continuous)
-                                .fill(Theme.card)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Theme.rMd, style: .continuous)
-                                .stroke(isFocused ? Theme.coral.opacity(0.6) : Theme.border,
-                                        lineWidth: isFocused ? 1.5 : 1)
-                        )
-                        .padding(.horizontal, Theme.s5)
-
-                        if let error = errorMessage {
-                            Text(error)
-                                .font(.footnote)
-                                .foregroundStyle(.red)
-                                .multilineTextAlignment(.center)
-                        }
-
-                        Button {
-                            Haptics.tap()
-                            isFocused = false
-                            Task { await send() }
-                        } label: {
-                            if isLoading {
-                                ProgressView().tint(.white)
-                            } else {
-                                Label("Отправить заявку", systemImage: "paperplane.fill")
-                            }
-                        }
-                        .buttonStyle(GradientButtonStyle())
-                        .disabled(username.isEmpty || isLoading)
-                        .opacity(username.isEmpty ? 0.55 : 1)
-                        .padding(.horizontal, Theme.s5)
+                    Button {
+                        Haptics.tap()
+                        isFocused = false
+                        Task { await send() }
+                    } label: {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text("Отправить заявку") }
                     }
-
-                    Spacer()
+                    .buttonStyle(PrimaryButtonStyle(enabled: !username.isEmpty))
+                    .disabled(username.isEmpty || isLoading)
+                    .padding(.horizontal, Theme.s5)
                 }
-                .animation(.spring(response: 0.5, dampingFraction: 0.75), value: success)
+
+                Spacer()
             }
+            .animation(.easeOut(duration: 0.2), value: success)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -109,11 +93,10 @@ struct AddFriendView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.secondary)
-                            .padding(8)
-                            .background(Circle().fill(Color.primary.opacity(0.08)))
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.muted)
                     }
+                    .buttonStyle(IconButtonStyle())
                 }
             }
             .onAppear { isFocused = true }

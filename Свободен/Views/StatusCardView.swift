@@ -7,68 +7,75 @@ struct StatusCardView: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             let remaining = max(0, status.expiresAt.timeIntervalSince(context.date))
-            let hours   = Int(remaining) / 3600
-            let minutes = (Int(remaining) % 3600) / 60
-            let seconds = Int(remaining) % 60
-            let urgent  = remaining < 600
+            let h = Int(remaining) / 3600
+            let m = (Int(remaining) % 3600) / 60
+            let s = Int(remaining) % 60
+            let urgent = remaining < 600
 
             VStack(alignment: .leading, spacing: Theme.s4) {
-                HStack(spacing: Theme.s2) {
+                HStack(spacing: 8) {
                     Circle()
-                        .fill(Theme.mint)
-                        .frame(width: 10, height: 10)
-                        .shadow(color: Theme.mint.opacity(0.6), radius: 6)
-                    Text("Ты свободен")
-                        .font(.bodyStrong)
-                        .foregroundStyle(.secondary)
+                        .fill(Theme.online)
+                        .frame(width: 8, height: 8)
+                    Text("СВОБОДЕН")
+                        .font(.system(size: 12, weight: .bold))
+                        .tracking(1.5)
+                        .foregroundStyle(Theme.muted)
                     Spacer()
                     Button {
                         Task { await onClear() }
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.secondary)
-                            .padding(8)
-                            .background(Circle().fill(Color.primary.opacity(0.06)))
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(Theme.muted)
+                            .frame(width: 28, height: 28)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(IconButtonStyle())
                 }
 
-                Text(String(format: "%02d:%02d:%02d", hours, minutes, seconds))
-                    .font(.system(size: 56, weight: .black, design: .rounded))
+                Text(String(format: "%02d:%02d:%02d", h, m, s))
+                    .font(.system(size: 56, weight: .black))
                     .monospacedDigit()
-                    .foregroundStyle(urgent ? AnyShapeStyle(Color.red) : AnyShapeStyle(Theme.sunsetGradient))
+                    .foregroundStyle(urgent ? Theme.danger : Color.primary)
                     .contentTransition(.numericText())
 
                 if !status.activities.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: Theme.s2) {
+                        HStack(spacing: 6) {
                             ForEach(status.activities, id: \.self) { act in
                                 let activity = Activity(rawValue: act)
                                 HStack(spacing: 6) {
                                     if let activity {
                                         Image(systemName: activity.icon)
-                                            .font(.system(size: 12, weight: .bold))
+                                            .font(.system(size: 11, weight: .bold))
                                     }
                                     Text(act)
-                                        .font(.subheadline.weight(.semibold))
+                                        .font(.system(size: 13, weight: .semibold))
                                 }
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, Theme.s3)
-                                .padding(.vertical, 8)
-                                .background(Theme.auroraGradient)
-                                .clipShape(Capsule())
+                                .foregroundStyle(.primary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: Theme.rSm)
+                                        .stroke(Theme.border, lineWidth: 1)
+                                )
                             }
                         }
                     }
                 }
 
                 if let district = status.district {
-                    Label(district, systemImage: "mappin.circle.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Image(systemName: "mappin")
+                            .font(.system(size: 11, weight: .bold))
+                        Text(district)
+                            .font(.system(size: 13))
+                    }
+                    .foregroundStyle(Theme.muted)
                 }
             }
-            .glassCard(padding: Theme.s5)
+            .card(padding: Theme.s5)
         }
     }
 }

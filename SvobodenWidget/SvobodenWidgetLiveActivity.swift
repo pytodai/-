@@ -2,24 +2,11 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
-// MARK: - Brand
 private enum Brand {
-    static let coral  = Color(red: 1.00, green: 0.42, blue: 0.62)
-    static let peach  = Color(red: 1.00, green: 0.55, blue: 0.26)
-    static let violet = Color(red: 0.62, green: 0.48, blue: 1.00)
-    static let mint   = Color(red: 0.31, green: 0.80, blue: 0.77)
-
-    static let primary = LinearGradient(
-        colors: [coral, peach],
-        startPoint: .topLeading, endPoint: .bottomTrailing
-    )
-    static let aurora = LinearGradient(
-        colors: [violet, coral],
-        startPoint: .topLeading, endPoint: .bottomTrailing
-    )
+    static let accent = Color(red: 1.00, green: 0.42, blue: 0.10)
+    static let online = Color(red: 0.30, green: 0.85, blue: 0.40)
 }
 
-// MARK: - Attributes (must match StatusActivityAttributes in main app)
 struct StatusActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         var expiresAt: Date
@@ -29,7 +16,6 @@ struct StatusActivityAttributes: ActivityAttributes {
     let username: String
 }
 
-// MARK: - Live Activity
 struct SvobodenWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: StatusActivityAttributes.self) { context in
@@ -40,116 +26,102 @@ struct SvobodenWidgetLiveActivity: Widget {
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 6) {
-                        Image(systemName: "hand.wave.fill")
-                            .foregroundStyle(Brand.coral)
-                        Text("Свободен")
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
+                        Circle().fill(Brand.online).frame(width: 8, height: 8)
+                        Text("СВОБОДЕН")
+                            .font(.system(size: 13, weight: .bold))
+                            .tracking(1)
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text(timerInterval: Date()...context.state.expiresAt, countsDown: true)
                         .monospacedDigit()
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundStyle(Brand.coral)
+                        .font(.system(size: 18, weight: .black))
+                        .foregroundStyle(Brand.accent)
                         .multilineTextAlignment(.trailing)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) {
                         if !context.state.activities.isEmpty {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 6) {
-                                    ForEach(context.state.activities, id: \.self) { act in
-                                        Text(act)
-                                            .font(.system(size: 11, weight: .semibold))
-                                            .padding(.horizontal, 8)
-                                            .padding(.vertical, 3)
-                                            .background(Capsule().fill(Brand.aurora.opacity(0.25)))
-                                            .foregroundStyle(.white)
-                                    }
-                                }
-                            }
+                            Text(context.state.activities.prefix(3).joined(separator: " · "))
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.7))
+                                .lineLimit(1)
                         }
+                        Spacer(minLength: 0)
                         if let district = context.state.district {
-                            Label(district, systemImage: "mappin.circle.fill")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
+                            HStack(spacing: 2) {
+                                Image(systemName: "mappin").font(.system(size: 9))
+                                Text(district).font(.system(size: 11))
+                            }
+                            .foregroundStyle(.white.opacity(0.55))
                         }
                     }
                 }
             } compactLeading: {
-                Image(systemName: "hand.wave.fill")
-                    .foregroundStyle(Brand.coral)
+                Circle().fill(Brand.online).frame(width: 10, height: 10)
             } compactTrailing: {
                 Text(timerInterval: Date()...context.state.expiresAt,
                      countsDown: true,
                      showsHours: false)
                     .monospacedDigit()
-                    .font(.system(.caption, design: .rounded).weight(.bold))
-                    .foregroundStyle(Brand.coral)
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Brand.accent)
                     .frame(width: 44)
             } minimal: {
-                ZStack {
-                    Circle().fill(Brand.primary)
-                    Image(systemName: "hand.wave.fill")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white)
-                }
+                Circle().fill(Brand.accent)
+                    .overlay(
+                        Circle().fill(.white).frame(width: 6, height: 6)
+                    )
             }
-            .keylineTint(Brand.coral)
+            .keylineTint(Brand.accent)
         }
     }
 
     @ViewBuilder
     private func lockScreen(context: ActivityViewContext<StatusActivityAttributes>) -> some View {
         HStack(alignment: .center, spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(Brand.primary)
-                    .frame(width: 52, height: 52)
-                    .shadow(color: Brand.coral.opacity(0.4), radius: 8, y: 4)
-                Image(systemName: "hand.wave.fill")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.white)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Ты свободен")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.65))
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 6) {
+                    Circle().fill(Brand.online).frame(width: 8, height: 8)
+                    Text("СВОБОДЕН")
+                        .font(.system(size: 12, weight: .black))
+                        .tracking(1.5)
+                        .foregroundStyle(.white.opacity(0.6))
+                }
 
                 if !context.state.activities.isEmpty {
                     Text(context.state.activities.prefix(3).joined(separator: " · "))
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.white)
                         .lineLimit(1)
                 } else {
                     Text("Готов встретиться")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(.white)
                 }
 
                 if let district = context.state.district {
                     HStack(spacing: 3) {
-                        Image(systemName: "mappin.circle.fill")
+                        Image(systemName: "mappin")
                             .font(.system(size: 10))
                         Text(district)
                             .font(.system(size: 11))
                     }
-                    .foregroundStyle(.white.opacity(0.55))
+                    .foregroundStyle(.white.opacity(0.5))
                 }
             }
 
             Spacer(minLength: 0)
 
-            VStack(alignment: .trailing, spacing: 2) {
+            VStack(alignment: .trailing, spacing: 0) {
                 Text(timerInterval: Date()...context.state.expiresAt, countsDown: true)
                     .monospacedDigit()
-                    .font(.system(size: 24, weight: .black, design: .rounded))
-                    .foregroundStyle(Brand.coral)
+                    .font(.system(size: 28, weight: .black))
+                    .foregroundStyle(Brand.accent)
                     .multilineTextAlignment(.trailing)
                 Text("осталось")
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(.white.opacity(0.45))
+                    .foregroundStyle(.white.opacity(0.4))
             }
         }
         .padding(.horizontal, 16)
