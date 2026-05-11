@@ -3,11 +3,15 @@ import SwiftUI
 @main
 struct ________App: App {
     @State private var appVM = AppViewModel()
+    @AppStorage("onboardingDone") private var onboardingDone = false
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if appVM.isAuthenticated {
+                if !onboardingDone {
+                    OnboardingView(isOnboardingDone: $onboardingDone)
+                        .transition(.push(from: .trailing))
+                } else if appVM.isAuthenticated {
                     HomeView()
                         .environment(appVM)
                         .transition(.asymmetric(
@@ -23,6 +27,7 @@ struct ________App: App {
                         ))
                 }
             }
+            .animation(.easeInOut(duration: 0.35), value: onboardingDone)
             .animation(.easeInOut(duration: 0.35), value: appVM.isAuthenticated)
         }
     }

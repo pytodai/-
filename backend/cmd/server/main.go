@@ -28,22 +28,21 @@ import (
 )
 
 func runMigrations(sqlDB *sql.DB) {
-	// Try migrations dir relative to executable, then relative to cwd
 	dirs := []string{
 		filepath.Join(filepath.Dir(os.Args[0]), "db", "migrations"),
 		"db/migrations",
 	}
 	for _, dir := range dirs {
 		if _, err := os.Stat(dir); err == nil {
-			goose.SetBaseFS(nil)
 			if err := goose.SetDialect("postgres"); err != nil {
 				log.Printf("goose dialect: %v", err)
 				return
 			}
 			if err := goose.Up(sqlDB, dir); err != nil {
-				log.Fatalf("migrations failed: %v", err)
+				log.Printf("WARNING: migrations error (non-fatal): %v", err)
+			} else {
+				log.Println("migrations applied")
 			}
-			log.Println("migrations applied")
 			return
 		}
 	}
@@ -109,6 +108,10 @@ func main() {
 	r.Use(chimw.Logger)
 	r.Use(chimw.Recoverer)
 
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	})
 	r.Post("/auth/phone/request", authH.RequestPhone)
 	r.Post("/auth/phone/verify", authH.VerifyPhone)
 
