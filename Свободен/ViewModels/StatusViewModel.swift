@@ -54,7 +54,7 @@ final class StatusViewModel {
 
         do {
             let status = try await APIClient.shared.setStatus(req)
-            appVM.currentStatus = status
+            appVM.applyStatus(status)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -65,7 +65,7 @@ final class StatusViewModel {
         defer { isLoading = false }
         do {
             try await APIClient.shared.deleteStatus()
-            appVM.currentStatus = nil
+            appVM.applyStatus(nil)
         } catch {
             errorMessage = error.localizedDescription
         }

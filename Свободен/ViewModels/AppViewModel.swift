@@ -7,6 +7,7 @@ final class AppViewModel {
     var currentStatus: UserStatus? = nil
     var isLoadingStatus = false
     let ws = WebSocketService()
+    let liveActivity = LiveActivityService()
 
     init() {
         isAuthenticated = KeychainService.loadToken() != nil
@@ -26,6 +27,7 @@ final class AppViewModel {
 
     func logout() {
         ws.disconnect()
+        liveActivity.stop()
         KeychainService.deleteToken()
         isAuthenticated = false
         currentStatus = nil
@@ -35,11 +37,38 @@ final class AppViewModel {
         isLoadingStatus = true
         defer { isLoadingStatus = false }
         do {
-            currentStatus = try await APIClient.shared.getStatus()
+            let status = try await APIClient.shared.getStatus()
+            applyStatus(status)
         } catch APIError.httpError(404, _) {
-            currentStatus = nil
+            applyStatus(nil)
         } catch {
             // Keep last known status on network error
         }
+    }
+
+    func applyStatus(_ status: UserStatus?) {
+        let previous = currentStatus
+        currentStatus = status
+        if let status {
+            if previous == nil {
+                liveActivity.start(status: status, username: usernameFromToken() ?? "me")
+            } else {
+                liveActivity.update(status: status)
+            }
+        } else {
+            liveActivity.stop()
+        }
+    }
+
+    private func usernameFromToken() -> String? {
+        guard let token = KeychainService.loadToken() else { return nil }
+        let parts = token.split(separator: ".")
+        guard parts.count >= 2 else { return nil }
+        var payload = String(parts[1])
+        while payload.count % 4 != 0 { payload.append("=") }
+        guard let data = Data(base64Encoded: payload),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let username = json["username"] as? String else { return nil }
+        return username
     }
 }
