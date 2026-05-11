@@ -1,80 +1,86 @@
-//
-//  SvobodenWidgetLiveActivity.swift
-//  SvobodenWidget
-//
-//  Created by Artem Sokolov on 5/11/26.
-//
-
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct SvobodenWidgetAttributes: ActivityAttributes {
-    public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
+struct StatusActivityAttributes: ActivityAttributes {
+    struct ContentState: Codable, Hashable {
+        var expiresAt: Date
+        var activities: [String]
+        var district: String?
     }
 
-    // Fixed non-changing properties about your activity go here!
-    var name: String
+    let username: String
 }
 
 struct SvobodenWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: SvobodenWidgetAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
+        ActivityConfiguration(for: StatusActivityAttributes.self) { context in
+            VStack(spacing: 8) {
+                HStack {
+                    Image(systemName: "hand.wave.fill")
+                        .foregroundStyle(Color.accentColor)
+                    Text("Я свободен")
+                        .font(.headline)
+                    Spacer()
+                    Text(timerInterval: Date()...context.state.expiresAt, countsDown: true)
+                        .font(.headline.monospacedDigit())
+                        .foregroundStyle(Color.accentColor)
+                }
+                if !context.state.activities.isEmpty {
+                    HStack(spacing: 6) {
+                        ForEach(context.state.activities, id: \.self) { act in
+                            Text(act)
+                                .font(.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.accentColor.opacity(0.15))
+                                .clipShape(Capsule())
+                        }
+                        Spacer()
+                    }
+                }
+                if let district = context.state.district {
+                    HStack(spacing: 4) {
+                        Image(systemName: "mappin.circle.fill")
+                        Text(district)
+                            .font(.caption)
+                        Spacer()
+                    }
+                    .foregroundStyle(.secondary)
+                }
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
-
+            .padding()
+            .activityBackgroundTint(Color.black.opacity(0.85))
+            .activitySystemActionForegroundColor(.white)
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
+                    Image(systemName: "hand.wave.fill")
+                        .foregroundStyle(Color.accentColor)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
+                    Text(timerInterval: Date()...context.state.expiresAt, countsDown: true)
+                        .monospacedDigit()
+                        .foregroundStyle(Color.accentColor)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    if !context.state.activities.isEmpty {
+                        Text(context.state.activities.joined(separator: " · "))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             } compactLeading: {
-                Text("L")
+                Image(systemName: "hand.wave.fill")
+                    .foregroundStyle(Color.accentColor)
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                Text(timerInterval: Date()...context.state.expiresAt, countsDown: true)
+                    .monospacedDigit()
+                    .frame(maxWidth: 50)
             } minimal: {
-                Text(context.state.emoji)
+                Image(systemName: "hand.wave.fill")
+                    .foregroundStyle(Color.accentColor)
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
         }
     }
-}
-
-extension SvobodenWidgetAttributes {
-    fileprivate static var preview: SvobodenWidgetAttributes {
-        SvobodenWidgetAttributes(name: "World")
-    }
-}
-
-extension SvobodenWidgetAttributes.ContentState {
-    fileprivate static var smiley: SvobodenWidgetAttributes.ContentState {
-        SvobodenWidgetAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: SvobodenWidgetAttributes.ContentState {
-         SvobodenWidgetAttributes.ContentState(emoji: "🤩")
-     }
-}
-
-#Preview("Notification", as: .content, using: SvobodenWidgetAttributes.preview) {
-   SvobodenWidgetLiveActivity()
-} contentStates: {
-    SvobodenWidgetAttributes.ContentState.smiley
-    SvobodenWidgetAttributes.ContentState.starEyes
 }

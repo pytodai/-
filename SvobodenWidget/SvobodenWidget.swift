@@ -1,58 +1,54 @@
-//
-//  SvobodenWidget.swift
-//  SvobodenWidget
-//
-//  Created by Artem Sokolov on 5/11/26.
-//
-
 import WidgetKit
 import SwiftUI
 
 struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
+    func placeholder(in context: Context) -> SvobodenEntry {
+        SvobodenEntry(date: Date())
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
-        completion(entry)
+    func getSnapshot(in context: Context, completion: @escaping (SvobodenEntry) -> ()) {
+        completion(SvobodenEntry(date: Date()))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SvobodenEntry>) -> ()) {
+        let timeline = Timeline(entries: [SvobodenEntry(date: Date())], policy: .atEnd)
         completion(timeline)
     }
-
-//    func relevances() async -> WidgetRelevances<Void> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
 }
 
-struct SimpleEntry: TimelineEntry {
+struct SvobodenEntry: TimelineEntry {
     let date: Date
-    let emoji: String
 }
 
-struct SvobodenWidgetEntryView : View {
-    var entry: Provider.Entry
+struct SvobodenWidgetEntryView: View {
+    var entry: SvobodenEntry
+    @Environment(\.widgetFamily) var family
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Emoji:")
-            Text(entry.emoji)
+        switch family {
+        case .accessoryCircular:
+            ZStack {
+                Circle().stroke(Color.accentColor, lineWidth: 2)
+                Image(systemName: "hand.wave.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color.accentColor)
+            }
+        case .accessoryRectangular:
+            HStack(spacing: 6) {
+                Image(systemName: "hand.wave.fill")
+                Text("Я свободен!").font(.headline)
+            }
+        default:
+            VStack(spacing: 8) {
+                Image(systemName: "hand.wave.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(Color.accentColor)
+                Text("Я свободен!")
+                    .font(.headline)
+                Text("Открыть приложение")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
@@ -62,23 +58,17 @@ struct SvobodenWidget: Widget {
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            if #available(iOS 17.0, *) {
-                SvobodenWidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
-            } else {
-                SvobodenWidgetEntryView(entry: entry)
-                    .padding()
-                    .background()
-            }
+            SvobodenWidgetEntryView(entry: entry)
+                .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Свободен")
+        .description("Быстрый доступ к статусу")
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular])
     }
 }
 
 #Preview(as: .systemSmall) {
     SvobodenWidget()
 } timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
+    SvobodenEntry(date: .now)
 }

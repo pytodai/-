@@ -8,7 +8,7 @@ struct StatusActivityAttributes: ActivityAttributes {
         var district: String?
     }
 
-    let userPhone: String
+    let username: String
 }
 
 @Observable
@@ -16,10 +16,10 @@ struct StatusActivityAttributes: ActivityAttributes {
 final class LiveActivityService {
     private var activity: ActivityKit.Activity<StatusActivityAttributes>?
 
-    func start(status: UserStatus, phone: String) {
+    func start(status: UserStatus, username: String) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
-        let attrs = StatusActivityAttributes(userPhone: phone)
+        let attrs = StatusActivityAttributes(username: username)
         let state = StatusActivityAttributes.ContentState(
             expiresAt: status.expiresAt,
             activities: status.activities,
