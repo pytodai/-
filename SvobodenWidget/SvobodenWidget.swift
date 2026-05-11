@@ -28,12 +28,12 @@ struct SvobodenWidgetEntryView: View {
             ZStack {
                 AccessoryWidgetBackground()
                 Circle().stroke(Color.white, lineWidth: 2).padding(6)
-                Image(systemName: "circle.fill")
+                Image(systemName: "hand.wave.fill")
                     .font(.system(size: 18, weight: .black))
             }
         case .accessoryRectangular:
             HStack(spacing: 8) {
-                Image(systemName: "circle.fill")
+                Image(systemName: "hand.wave.fill")
                     .font(.system(size: 16, weight: .black))
                 VStack(alignment: .leading, spacing: 1) {
                     Text("СВОБОДЕН")
@@ -74,7 +74,7 @@ struct SvobodenWidgetEntryView: View {
     private func badge(size: CGFloat) -> some View {
         ZStack {
             Circle().fill(Brand.accent)
-            Image(systemName: "circle.fill")
+            Image(systemName: "hand.wave.fill")
                 .font(.system(size: size * 0.32, weight: .black))
                 .foregroundStyle(.white)
         }

@@ -7,7 +7,7 @@ struct HomeView: View {
         TabView {
             StatusTabView()
                 .tabItem {
-                    Label("Статус", systemImage: "circle.fill")
+                    Label("Статус", systemImage: "hand.wave.fill")
                 }
 
             FriendsView(ws: appVM.ws)
@@ -93,14 +93,11 @@ struct StatusTabView: View {
                     )
 
                 VStack(spacing: Theme.s2) {
+                    Image(systemName: "hand.wave.fill")
+                        .font(.system(size: 44, weight: .bold))
                     Text(appVM.currentStatus != nil ? "ОБНОВИТЬ" : "СВОБОДЕН")
-                        .font(.system(size: 22, weight: .black))
+                        .font(.system(size: 18, weight: .black))
                         .tracking(2)
-                    if appVM.currentStatus == nil {
-                        Rectangle()
-                            .fill(.white.opacity(0.6))
-                            .frame(width: 28, height: 2)
-                    }
                 }
                 .foregroundStyle(appVM.currentStatus == nil ? Color.white : Theme.muted)
             }

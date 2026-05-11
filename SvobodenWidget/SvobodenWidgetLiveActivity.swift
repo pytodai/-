@@ -26,7 +26,9 @@ struct SvobodenWidgetLiveActivity: Widget {
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 6) {
-                        Circle().fill(Brand.online).frame(width: 8, height: 8)
+                        Image(systemName: "hand.wave.fill")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(Brand.accent)
                         Text("СВОБОДЕН")
                             .font(.system(size: 13, weight: .bold))
                             .tracking(1)
@@ -58,7 +60,9 @@ struct SvobodenWidgetLiveActivity: Widget {
                     }
                 }
             } compactLeading: {
-                Circle().fill(Brand.online).frame(width: 10, height: 10)
+                Image(systemName: "hand.wave.fill")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Brand.accent)
             } compactTrailing: {
                 Text(timerInterval: Date()...context.state.expiresAt,
                      countsDown: true,
@@ -68,10 +72,9 @@ struct SvobodenWidgetLiveActivity: Widget {
                     .foregroundStyle(Brand.accent)
                     .frame(width: 44)
             } minimal: {
-                Circle().fill(Brand.accent)
-                    .overlay(
-                        Circle().fill(.white).frame(width: 6, height: 6)
-                    )
+                Image(systemName: "hand.wave.fill")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Brand.accent)
             }
             .keylineTint(Brand.accent)
         }
@@ -82,7 +85,9 @@ struct SvobodenWidgetLiveActivity: Widget {
         HStack(alignment: .center, spacing: 14) {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
-                    Circle().fill(Brand.online).frame(width: 8, height: 8)
+                    Image(systemName: "hand.wave.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Brand.accent)
                     Text("СВОБОДЕН")
                         .font(.system(size: 12, weight: .black))
                         .tracking(1.5)

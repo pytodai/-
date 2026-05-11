@@ -14,13 +14,16 @@ struct StatusCardView: View {
 
             VStack(alignment: .leading, spacing: Theme.s4) {
                 HStack(spacing: 8) {
-                    Circle()
-                        .fill(Theme.online)
-                        .frame(width: 8, height: 8)
+                    Image(systemName: "hand.wave.fill")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Theme.accent)
                     Text("СВОБОДЕН")
                         .font(.system(size: 12, weight: .bold))
                         .tracking(1.5)
                         .foregroundStyle(Theme.muted)
+                    Circle()
+                        .fill(Theme.online)
+                        .frame(width: 8, height: 8)
                     Spacer()
                     Button {
                         Task { await onClear() }
