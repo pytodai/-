@@ -88,7 +88,9 @@ struct SvobodenWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: SvobodenProvider()) { entry in
             SvobodenWidgetEntryView(entry: entry)
-                .containerBackground(.background, for: .widget)
+                .containerBackground(for: .widget) {
+                    Color(.systemBackground)
+                }
         }
         .configurationDisplayName("Свободен")
         .description("Быстрый доступ — нажми и установи статус")
