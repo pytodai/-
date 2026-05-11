@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct ________App: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var appVM = AppViewModel()
     @AppStorage("onboardingDone") private var onboardingDone = false
 

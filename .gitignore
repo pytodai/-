@@ -1,6 +1,7 @@
 # Backend
 backend/.env
 backend/backend
+backend/AuthKey_*.p8
 
 # iOS
 Свободен.xcodeproj/xcuserdata/

@@ -23,6 +23,7 @@ import (
 	"svoboden/backend/internal/db"
 	"svoboden/backend/internal/handler"
 	"svoboden/backend/internal/middleware"
+	"svoboden/backend/internal/push"
 	"svoboden/backend/internal/service"
 	"svoboden/backend/internal/ws"
 )
@@ -85,10 +86,23 @@ func main() {
 		}
 	}
 
+	var apnsClient *push.Client
+	if cfg.APNSKeyBase64 != "" {
+		c, err := push.NewClient(cfg.APNSKeyBase64, cfg.APNSKeyID, cfg.APNSTeamID, cfg.APNSBundleID, cfg.APNSProduction)
+		if err != nil {
+			log.Printf("apns init failed (push disabled): %v", err)
+		} else {
+			apnsClient = c
+			log.Printf("apns initialized (production=%v)", cfg.APNSProduction)
+		}
+	} else {
+		log.Println("APNS_KEY_BASE64 not set, push disabled")
+	}
+
 	queries := db.New(sqlDB)
 	authSvc := service.NewAuthService(queries, cfg.JWTSecret)
 	statusSvc := service.NewStatusService(queries)
-	friendsSvc := service.NewFriendsService(queries)
+	friendsSvc := service.NewFriendsService(queries, apnsClient)
 
 	var hub *ws.Hub
 	if rdb != nil {
@@ -97,7 +111,7 @@ func main() {
 		statusSvc.SetHub(hub)
 	}
 
-	invSvc := service.NewInvitationsService(queries, hub)
+	invSvc := service.NewInvitationsService(queries, hub, apnsClient)
 
 	authH := handler.NewAuthHandler(authSvc)
 	statusH := handler.NewStatusHandler(statusSvc)

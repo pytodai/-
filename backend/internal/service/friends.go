@@ -8,14 +8,16 @@ import (
 	"github.com/google/uuid"
 	"svoboden/backend/internal/db"
 	"svoboden/backend/internal/middleware"
+	"svoboden/backend/internal/push"
 )
 
 type FriendsService struct {
-	q db.Querier
+	q    db.Querier
+	apns *push.Client
 }
 
-func NewFriendsService(q db.Querier) *FriendsService {
-	return &FriendsService{q: q}
+func NewFriendsService(q db.Querier, apns *push.Client) *FriendsService {
+	return &FriendsService{q: q, apns: apns}
 }
 
 func (s *FriendsService) SendRequest(ctx context.Context, toPhone string) (*db.FriendRequest, error) {
@@ -39,6 +41,16 @@ func (s *FriendsService) SendRequest(ctx context.Context, toPhone string) (*db.F
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.apns != nil {
+		tokens, _ := s.q.GetDeviceTokensForUser(ctx, target.ID)
+		if len(tokens) > 0 {
+			go s.apns.SendToTokens(tokens, "Заявка в друзья", "Кто-то хочет добавить тебя", map[string]any{
+				"type":       "friend_request",
+				"request_id": fr.ID.String(),
+				"from_id":    callerID.String(),
+			})
+		}
 	}
 	return &fr, nil
 }

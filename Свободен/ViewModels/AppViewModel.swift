@@ -10,12 +10,17 @@ final class AppViewModel {
 
     init() {
         isAuthenticated = KeychainService.loadToken() != nil
+        if isAuthenticated {
+            ws.connect()
+            PushService.shared.requestAuthorizationAndRegister()
+        }
     }
 
     func onLogin(token: String) {
         KeychainService.saveToken(token)
         isAuthenticated = true
         ws.connect()
+        PushService.shared.requestAuthorizationAndRegister()
         Task { await refreshStatus() }
     }
 

@@ -101,6 +101,12 @@ actor APIClient {
         try await deleteReq(path: "/friends/\(id)", token: token)
     }
 
+    func registerDeviceToken(_ deviceToken: String) async throws {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        let body = ["token": deviceToken, "platform": "ios"]
+        try await postBodyNoContent(path: "/me/device-token", body: body, token: token)
+    }
+
     private func get<T: Decodable>(path: String, token: String?) async throws -> T {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "GET"
@@ -140,6 +146,18 @@ actor APIClient {
     private func postNoContent(path: String, token: String?) async throws {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "POST"
+        if let token { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        let (_, response) = try await URLSession.shared.data(for: req)
+        if let http = response as? HTTPURLResponse, http.statusCode >= 400 {
+            throw APIError.httpError(http.statusCode, "")
+        }
+    }
+
+    private func postBodyNoContent<B: Encodable>(path: String, body: B, token: String?) async throws {
+        var req = URLRequest(url: baseURL.appendingPathComponent(path))
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = try encoder.encode(body)
         if let token { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         let (_, response) = try await URLSession.shared.data(for: req)
         if let http = response as? HTTPURLResponse, http.statusCode >= 400 {

@@ -7,16 +7,29 @@ import (
 
 	"github.com/google/uuid"
 	"svoboden/backend/internal/db"
+	"svoboden/backend/internal/push"
 	"svoboden/backend/internal/ws"
 )
 
 type InvitationsService struct {
-	q   db.Querier
-	hub *ws.Hub
+	q    db.Querier
+	hub  *ws.Hub
+	apns *push.Client
 }
 
-func NewInvitationsService(q db.Querier, hub *ws.Hub) *InvitationsService {
-	return &InvitationsService{q: q, hub: hub}
+func NewInvitationsService(q db.Querier, hub *ws.Hub, apns *push.Client) *InvitationsService {
+	return &InvitationsService{q: q, hub: hub, apns: apns}
+}
+
+func (s *InvitationsService) pushToUser(ctx context.Context, userID uuid.UUID, title, body string, data map[string]any) {
+	if s.apns == nil {
+		return
+	}
+	tokens, err := s.q.GetDeviceTokensForUser(ctx, userID)
+	if err != nil || len(tokens) == 0 {
+		return
+	}
+	go s.apns.SendToTokens(tokens, title, body, data)
 }
 
 func (s *InvitationsService) SendInvitation(ctx context.Context, toID string, message, activity string) (*db.Invitation, error) {
@@ -49,6 +62,15 @@ func (s *InvitationsService) SendInvitation(ctx context.Context, toID string, me
 			},
 		})
 	}
+	pushBody := message
+	if pushBody == "" {
+		pushBody = "Хочет встретиться"
+	}
+	s.pushToUser(ctx, tid, "Новое приглашение", pushBody, map[string]any{
+		"type":           "invitation",
+		"invitation_id":  inv.ID.String(),
+		"from_id":        callerID.String(),
+	})
 	return &inv, nil
 }
 
@@ -138,6 +160,10 @@ func (s *InvitationsService) SendPing(ctx context.Context, toID string) error {
 			Data:   map[string]any{"from_id": callerID.String(), "ping_id": ping.ID.String()},
 		})
 	}
+	s.pushToUser(ctx, tid, "Пинг", "Друг хочет узнать, ты свободен?", map[string]any{
+		"type":    "ping",
+		"from_id": callerID.String(),
+	})
 	return nil
 }
 

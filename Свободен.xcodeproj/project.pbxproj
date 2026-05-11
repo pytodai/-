@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		ACEED9E62FB23C0D009A9282 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACEED9E52FB23C0D009A9282 /* WidgetKit.framework */; };
+		ACEED9E82FB23C0D009A9282 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACEED9E72FB23C0D009A9282 /* SwiftUI.framework */; };
+		ACEED9F72FB23C0E009A9282 /* SvobodenWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = ACEED9E32FB23C0D009A9282 /* SvobodenWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		ACEED8B42FB22164009A9282 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +27,36 @@
 			remoteGlobalIDString = ACEED8A52FB22163009A9282;
 			remoteInfo = "Свободен";
 		};
+		ACEED9F52FB23C0E009A9282 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ACEED89E2FB22163009A9282 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ACEED9E22FB23C0D009A9282;
+			remoteInfo = SvobodenWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		ACEED9FC2FB23C0E009A9282 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				ACEED9F72FB23C0E009A9282 /* SvobodenWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		ACEED8A62FB22163009A9282 /* Свободен.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Свободен.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACEED8B32FB22164009A9282 /* СвободенTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "СвободенTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACEED8BD2FB22164009A9282 /* СвободенUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "СвободенUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACEED9E32FB23C0D009A9282 /* SvobodenWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SvobodenWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		ACEED9E52FB23C0D009A9282 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		ACEED9E72FB23C0D009A9282 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +66,13 @@
 				Info.plist,
 			);
 			target = ACEED8A52FB22163009A9282 /* Свободен */;
+		};
+		ACEED9FB2FB23C0E009A9282 /* Exceptions for "SvobodenWidget" folder in "SvobodenWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = ACEED9E22FB23C0D009A9282 /* SvobodenWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -56,6 +93,14 @@
 		ACEED8C02FB22164009A9282 /* СвободенUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "СвободенUITests";
+			sourceTree = "<group>";
+		};
+		ACEED9E92FB23C0D009A9282 /* SvobodenWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ACEED9FB2FB23C0E009A9282 /* Exceptions for "SvobodenWidget" folder in "SvobodenWidgetExtension" target */,
+			);
+			path = SvobodenWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,6 +127,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ACEED9E02FB23C0D009A9282 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ACEED9E82FB23C0D009A9282 /* SwiftUI.framework in Frameworks */,
+				ACEED9E62FB23C0D009A9282 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -91,6 +145,8 @@
 				ACEED8A82FB22163009A9282 /* Свободен */,
 				ACEED8B62FB22164009A9282 /* СвободенTests */,
 				ACEED8C02FB22164009A9282 /* СвободенUITests */,
+				ACEED9E92FB23C0D009A9282 /* SvobodenWidget */,
+				ACEED9E42FB23C0D009A9282 /* Frameworks */,
 				ACEED8A72FB22163009A9282 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +157,18 @@
 				ACEED8A62FB22163009A9282 /* Свободен.app */,
 				ACEED8B32FB22164009A9282 /* СвободенTests.xctest */,
 				ACEED8BD2FB22164009A9282 /* СвободенUITests.xctest */,
+				ACEED9E32FB23C0D009A9282 /* SvobodenWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		ACEED9E42FB23C0D009A9282 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ACEED9E52FB23C0D009A9282 /* WidgetKit.framework */,
+				ACEED9E72FB23C0D009A9282 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,10 +181,12 @@
 				ACEED8A22FB22163009A9282 /* Sources */,
 				ACEED8A32FB22163009A9282 /* Frameworks */,
 				ACEED8A42FB22163009A9282 /* Resources */,
+				ACEED9FC2FB23C0E009A9282 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				ACEED9F62FB23C0E009A9282 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				ACEED8A82FB22163009A9282 /* Свободен */,
@@ -176,6 +244,28 @@
 			productReference = ACEED8BD2FB22164009A9282 /* СвободенUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		ACEED9E22FB23C0D009A9282 /* SvobodenWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ACEED9F82FB23C0E009A9282 /* Build configuration list for PBXNativeTarget "SvobodenWidgetExtension" */;
+			buildPhases = (
+				ACEED9DF2FB23C0D009A9282 /* Sources */,
+				ACEED9E02FB23C0D009A9282 /* Frameworks */,
+				ACEED9E12FB23C0D009A9282 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ACEED9E92FB23C0D009A9282 /* SvobodenWidget */,
+			);
+			name = SvobodenWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = SvobodenWidgetExtension;
+			productReference = ACEED9E32FB23C0D009A9282 /* SvobodenWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -197,6 +287,9 @@
 						CreatedOnToolsVersion = 26.4.1;
 						TestTargetID = ACEED8A52FB22163009A9282;
 					};
+					ACEED9E22FB23C0D009A9282 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
 				};
 			};
 			buildConfigurationList = ACEED8A12FB22163009A9282 /* Build configuration list for PBXProject "Свободен" */;
@@ -216,6 +309,7 @@
 				ACEED8A52FB22163009A9282 /* Свободен */,
 				ACEED8B22FB22164009A9282 /* СвободенTests */,
 				ACEED8BC2FB22164009A9282 /* СвободенUITests */,
+				ACEED9E22FB23C0D009A9282 /* SvobodenWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +330,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		ACEED8BB2FB22164009A9282 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ACEED9E12FB23C0D009A9282 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +367,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ACEED9DF2FB23C0D009A9282 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +386,11 @@
 			isa = PBXTargetDependency;
 			target = ACEED8A52FB22163009A9282 /* Свободен */;
 			targetProxy = ACEED8BE2FB22164009A9282 /* PBXContainerItemProxy */;
+		};
+		ACEED9F62FB23C0E009A9282 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ACEED9E22FB23C0D009A9282 /* SvobodenWidgetExtension */;
+			targetProxy = ACEED9F52FB23C0E009A9282 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -553,6 +666,66 @@
 			};
 			name = Release;
 		};
+		ACEED9F92FB23C0E009A9282 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PG4FQ4CWCG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SvobodenWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SvobodenWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.sokolov.svoboden.SvobodenWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ACEED9FA2FB23C0E009A9282 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PG4FQ4CWCG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SvobodenWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SvobodenWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.sokolov.svoboden.SvobodenWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -588,6 +761,15 @@
 			buildConfigurations = (
 				ACEED8CE2FB22164009A9282 /* Debug */,
 				ACEED8CF2FB22164009A9282 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ACEED9F82FB23C0E009A9282 /* Build configuration list for PBXNativeTarget "SvobodenWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ACEED9F92FB23C0E009A9282 /* Debug */,
+				ACEED9FA2FB23C0E009A9282 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

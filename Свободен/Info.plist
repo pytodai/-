@@ -21,5 +21,9 @@
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Для отображения вашего района друзьям</string>
+    <key>NSSupportsLiveActivities</key>
+    <true/>
+    <key>NSSupportsLiveActivitiesFrequentUpdates</key>
+    <true/>
 </dict>
 </plist>
