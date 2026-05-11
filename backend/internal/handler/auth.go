@@ -15,35 +15,32 @@ func NewAuthHandler(svc *service.AuthService) *AuthHandler {
 	return &AuthHandler{svc: svc}
 }
 
-type requestPhoneBody struct {
-	Phone string `json:"phone"`
+type credentialsBody struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-type verifyPhoneBody struct {
-	Phone string `json:"phone"`
-	Code  string `json:"code"`
+func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
+	var body credentialsBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Username == "" || body.Password == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "username and password required"})
+		return
+	}
+	token, err := h.svc.Register(r.Context(), body.Username, body.Password)
+	if err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"token": token})
 }
 
-func (h *AuthHandler) RequestPhone(w http.ResponseWriter, r *http.Request) {
-	var body requestPhoneBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Phone == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "phone required"})
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var body credentialsBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Username == "" || body.Password == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "username and password required"})
 		return
 	}
-	if err := h.svc.RequestCode(r.Context(), body.Phone); err != nil {
-		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
-		return
-	}
-	writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
-}
-
-func (h *AuthHandler) VerifyPhone(w http.ResponseWriter, r *http.Request) {
-	var body verifyPhoneBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Phone == "" || body.Code == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "phone and code required"})
-		return
-	}
-	token, err := h.svc.VerifyCode(r.Context(), body.Phone, body.Code)
+	token, err := h.svc.Login(r.Context(), body.Username, body.Password)
 	if err != nil {
 		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": err.Error()})
 		return

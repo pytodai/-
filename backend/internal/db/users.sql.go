@@ -12,34 +12,57 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (phone) VALUES ($1) RETURNING id, phone, created_at
+INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, phone, created_at, username, password_hash
 `
 
-func (q *Queries) CreateUser(ctx context.Context, phone string) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, phone)
+type CreateUserParams struct {
+	Username     string `json:"username"`
+	PasswordHash string `json:"password_hash"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.PasswordHash)
 	var i User
-	err := row.Scan(&i.ID, &i.Phone, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Phone,
+		&i.CreatedAt,
+		&i.Username,
+		&i.PasswordHash,
+	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, phone, created_at FROM users WHERE id = $1 LIMIT 1
+SELECT id, phone, created_at, username, password_hash FROM users WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserByID, id)
 	var i User
-	err := row.Scan(&i.ID, &i.Phone, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Phone,
+		&i.CreatedAt,
+		&i.Username,
+		&i.PasswordHash,
+	)
 	return i, err
 }
 
-const getUserByPhone = `-- name: GetUserByPhone :one
-SELECT id, phone, created_at FROM users WHERE phone = $1 LIMIT 1
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, phone, created_at, username, password_hash FROM users WHERE username = $1 LIMIT 1
 `
 
-func (q *Queries) GetUserByPhone(ctx context.Context, phone string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUserByPhone, phone)
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
 	var i User
-	err := row.Scan(&i.ID, &i.Phone, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Phone,
+		&i.CreatedAt,
+		&i.Username,
+		&i.PasswordHash,
+	)
 	return i, err
 }

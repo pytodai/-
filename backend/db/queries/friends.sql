@@ -13,7 +13,7 @@ WHERE id = $1
 RETURNING *;
 
 -- name: GetPendingRequestsForUser :many
-SELECT fr.*, u.phone as from_phone
+SELECT fr.*, u.username as from_username
 FROM friend_requests fr
 JOIN users u ON u.id = fr.from_id
 WHERE fr.to_id = $1 AND fr.status = 'pending'
@@ -27,11 +27,11 @@ ON CONFLICT DO NOTHING;
 DELETE FROM friendships WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1);
 
 -- name: GetFriends :many
-SELECT u.id, u.phone, u.created_at
+SELECT u.id, u.username, u.created_at
 FROM friendships f
 JOIN users u ON u.id = f.friend_id
 WHERE f.user_id = $1
-ORDER BY u.phone;
+ORDER BY u.username;
 
 -- name: AreFriends :one
 SELECT EXISTS(
@@ -41,7 +41,7 @@ SELECT EXISTS(
 -- name: GetFriendsWithStatus :many
 SELECT
     u.id,
-    u.phone,
+    u.username,
     us.id AS status_id,
     us.expires_at,
     us.activities,
@@ -50,4 +50,4 @@ FROM friendships f
 JOIN users u ON u.id = f.friend_id
 LEFT JOIN user_statuses us ON us.user_id = u.id AND us.expires_at > now()
 WHERE f.user_id = $1
-ORDER BY (us.id IS NOT NULL) DESC, u.phone;
+ORDER BY (us.id IS NOT NULL) DESC, u.username;

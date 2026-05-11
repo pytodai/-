@@ -71,9 +71,11 @@ type Ping struct {
 }
 
 type User struct {
-	ID        uuid.UUID `json:"id"`
-	Phone     string    `json:"phone"`
-	CreatedAt time.Time `json:"created_at"`
+	ID           uuid.UUID      `json:"id"`
+	Phone        sql.NullString `json:"phone"`
+	CreatedAt    time.Time      `json:"created_at"`
+	Username     string         `json:"username"`
+	PasswordHash string         `json:"password_hash"`
 }
 
 type UserStatus struct {

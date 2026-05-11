@@ -80,7 +80,7 @@ struct FriendRowView: View {
                 Circle()
                     .fill(friend.hasActiveStatus ? Color.green : Color.secondary.opacity(0.3))
                     .frame(width: 10, height: 10)
-                Text(friend.phone)
+                Text("@" + friend.username)
                     .font(.body)
                 Spacer()
             }

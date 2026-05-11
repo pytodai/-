@@ -44,8 +44,8 @@ final class FriendsViewModel {
         }
     }
 
-    func sendRequest(phone: String) async throws {
-        try await APIClient.shared.sendFriendRequest(phone: phone)
+    func sendRequest(username: String) async throws {
+        try await APIClient.shared.sendFriendRequest(username: username)
     }
 
     func accept(request: FriendRequest) async {
@@ -86,7 +86,7 @@ final class FriendsViewModel {
                 let expiresAt = msg.data?.expiresAt
                 friends[idx] = Friend(
                     id: f.id,
-                    phone: f.phone,
+                    username: f.username,
                     statusId: "live",
                     expiresAt: expiresAt.flatMap { isoFormatter.date(from: $0) },
                     activities: msg.data?.activities ?? [],
@@ -97,7 +97,7 @@ final class FriendsViewModel {
             if let idx = friends.firstIndex(where: { $0.id == userId }) {
                 let f = friends[idx]
                 friends[idx] = Friend(
-                    id: f.id, phone: f.phone,
+                    id: f.id, username: f.username,
                     statusId: nil, expiresAt: nil,
                     activities: nil, district: nil
                 )

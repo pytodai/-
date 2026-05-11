@@ -39,14 +39,18 @@ actor APIClient {
         return e
     }
 
-    func requestCode(phone: String) async throws {
-        let body = ["phone": phone]
-        _ = try await post(path: "/auth/phone/request", body: body, token: nil) as [String: String]
+    func register(username: String, password: String) async throws -> String {
+        let body = ["username": username, "password": password]
+        let resp = try await post(path: "/auth/register", body: body, token: nil) as [String: String]
+        guard let token = resp["token"] else {
+            throw APIError.httpError(200, "missing token in response")
+        }
+        return token
     }
 
-    func verifyCode(phone: String, code: String) async throws -> String {
-        let body = ["phone": phone, "code": code]
-        let resp = try await post(path: "/auth/phone/verify", body: body, token: nil) as [String: String]
+    func login(username: String, password: String) async throws -> String {
+        let body = ["username": username, "password": password]
+        let resp = try await post(path: "/auth/login", body: body, token: nil) as [String: String]
         guard let token = resp["token"] else {
             throw APIError.httpError(200, "missing token in response")
         }
@@ -75,9 +79,9 @@ actor APIClient {
         return try await get(path: "/friends", token: token)
     }
 
-    func sendFriendRequest(phone: String) async throws {
+    func sendFriendRequest(username: String) async throws {
         guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
-        let body = ["phone": phone]
+        let body = ["username": username]
         _ = try await post(path: "/friends/requests", body: body, token: token) as [String: String]
     }
 

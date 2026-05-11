@@ -13,7 +13,7 @@ type contextKey string
 const userIDKey contextKey = "userID"
 
 type Claims struct {
-	Phone string `json:"phone"`
+	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 

@@ -80,23 +80,29 @@ func (q *Queries) GetFriendRequest(ctx context.Context, id uuid.UUID) (FriendReq
 }
 
 const getFriends = `-- name: GetFriends :many
-SELECT u.id, u.phone, u.created_at
+SELECT u.id, u.username, u.created_at
 FROM friendships f
 JOIN users u ON u.id = f.friend_id
 WHERE f.user_id = $1
-ORDER BY u.phone
+ORDER BY u.username
 `
 
-func (q *Queries) GetFriends(ctx context.Context, userID uuid.UUID) ([]User, error) {
+type GetFriendsRow struct {
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func (q *Queries) GetFriends(ctx context.Context, userID uuid.UUID) ([]GetFriendsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getFriends, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	var items []GetFriendsRow
 	for rows.Next() {
-		var i User
-		if err := rows.Scan(&i.ID, &i.Phone, &i.CreatedAt); err != nil {
+		var i GetFriendsRow
+		if err := rows.Scan(&i.ID, &i.Username, &i.CreatedAt); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -113,7 +119,7 @@ func (q *Queries) GetFriends(ctx context.Context, userID uuid.UUID) ([]User, err
 const getFriendsWithStatus = `-- name: GetFriendsWithStatus :many
 SELECT
     u.id,
-    u.phone,
+    u.username,
     us.id AS status_id,
     us.expires_at,
     us.activities,
@@ -122,12 +128,12 @@ FROM friendships f
 JOIN users u ON u.id = f.friend_id
 LEFT JOIN user_statuses us ON us.user_id = u.id AND us.expires_at > now()
 WHERE f.user_id = $1
-ORDER BY (us.id IS NOT NULL) DESC, u.phone
+ORDER BY (us.id IS NOT NULL) DESC, u.username
 `
 
 type GetFriendsWithStatusRow struct {
 	ID         uuid.UUID      `json:"id"`
-	Phone      string         `json:"phone"`
+	Username   string         `json:"username"`
 	StatusID   uuid.NullUUID  `json:"status_id"`
 	ExpiresAt  sql.NullTime   `json:"expires_at"`
 	Activities []string       `json:"activities"`
@@ -145,7 +151,7 @@ func (q *Queries) GetFriendsWithStatus(ctx context.Context, userID uuid.UUID) ([
 		var i GetFriendsWithStatusRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.Phone,
+			&i.Username,
 			&i.StatusID,
 			&i.ExpiresAt,
 			pq.Array(&i.Activities),
@@ -165,7 +171,7 @@ func (q *Queries) GetFriendsWithStatus(ctx context.Context, userID uuid.UUID) ([
 }
 
 const getPendingRequestsForUser = `-- name: GetPendingRequestsForUser :many
-SELECT fr.id, fr.from_id, fr.to_id, fr.status, fr.created_at, fr.updated_at, u.phone as from_phone
+SELECT fr.id, fr.from_id, fr.to_id, fr.status, fr.created_at, fr.updated_at, u.username as from_username
 FROM friend_requests fr
 JOIN users u ON u.id = fr.from_id
 WHERE fr.to_id = $1 AND fr.status = 'pending'
@@ -173,13 +179,13 @@ ORDER BY fr.created_at DESC
 `
 
 type GetPendingRequestsForUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	FromID    uuid.UUID `json:"from_id"`
-	ToID      uuid.UUID `json:"to_id"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	FromPhone string    `json:"from_phone"`
+	ID           uuid.UUID `json:"id"`
+	FromID       uuid.UUID `json:"from_id"`
+	ToID         uuid.UUID `json:"to_id"`
+	Status       string    `json:"status"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	FromUsername string    `json:"from_username"`
 }
 
 func (q *Queries) GetPendingRequestsForUser(ctx context.Context, toID uuid.UUID) ([]GetPendingRequestsForUserRow, error) {
@@ -198,7 +204,7 @@ func (q *Queries) GetPendingRequestsForUser(ctx context.Context, toID uuid.UUID)
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.FromPhone,
+			&i.FromUsername,
 		); err != nil {
 			return nil, err
 		}

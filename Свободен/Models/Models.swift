@@ -4,7 +4,7 @@ import Foundation
 
 struct Friend: Codable, Identifiable {
     let id: String
-    let phone: String
+    let username: String
     let statusId: String?
     let expiresAt: Date?
     let activities: [String]?
@@ -13,7 +13,7 @@ struct Friend: Codable, Identifiable {
     var hasActiveStatus: Bool { statusId != nil }
 
     enum CodingKeys: String, CodingKey {
-        case id, phone, district, activities
+        case id, username, district, activities
         case statusId  = "status_id"
         case expiresAt = "expires_at"
     }
@@ -21,13 +21,13 @@ struct Friend: Codable, Identifiable {
 
 struct FriendRequest: Codable, Identifiable {
     let id: String
-    let fromPhone: String
+    let fromUsername: String
     let fromId: String
 
     enum CodingKeys: String, CodingKey {
         case id
-        case fromPhone = "from_phone"
-        case fromId    = "from_id"
+        case fromUsername = "from_username"
+        case fromId       = "from_id"
     }
 }
 

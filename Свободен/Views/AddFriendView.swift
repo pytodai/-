@@ -3,7 +3,7 @@ import SwiftUI
 struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
     var friendsVM: FriendsViewModel
-    @State private var phone = ""
+    @State private var username = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var success = false
@@ -19,7 +19,7 @@ struct AddFriendView: View {
                         .foregroundStyle(Color.accentColor)
                     Text("Добавить друга")
                         .font(.title2.bold())
-                    Text("Введите номер телефона")
+                    Text("Введите логин")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -30,9 +30,9 @@ struct AddFriendView: View {
                         .font(.headline)
                 } else {
                     VStack(spacing: 12) {
-                        TextField("+7 (999) 000-00-00", text: $phone)
-                            .keyboardType(.phonePad)
-                            .textContentType(.telephoneNumber)
+                        TextField("логин", text: $username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
                             .font(.title2)
                             .multilineTextAlignment(.center)
                             .padding()
@@ -62,7 +62,7 @@ struct AddFriendView: View {
                             .foregroundStyle(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
-                        .disabled(phone.isEmpty || isLoading)
+                        .disabled(username.isEmpty || isLoading)
                         .padding(.horizontal, 32)
                     }
                 }
@@ -84,7 +84,7 @@ struct AddFriendView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            try await friendsVM.sendRequest(phone: phone)
+            try await friendsVM.sendRequest(username: username)
             success = true
         } catch {
             errorMessage = error.localizedDescription

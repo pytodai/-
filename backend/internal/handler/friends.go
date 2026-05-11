@@ -24,7 +24,7 @@ func (h *FriendsHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
 	}
 	type friendResp struct {
 		ID         string   `json:"id"`
-		Phone      string   `json:"phone"`
+		Username   string   `json:"username"`
 		StatusID   *string  `json:"status_id,omitempty"`
 		ExpiresAt  *string  `json:"expires_at,omitempty"`
 		Activities []string `json:"activities,omitempty"`
@@ -33,8 +33,8 @@ func (h *FriendsHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
 	out := make([]friendResp, 0, len(friends))
 	for _, f := range friends {
 		fr := friendResp{
-			ID:    f.ID.String(),
-			Phone: f.Phone,
+			ID:       f.ID.String(),
+			Username: f.Username,
 		}
 		if f.StatusID.Valid {
 			s := f.StatusID.UUID.String()
@@ -53,13 +53,13 @@ func (h *FriendsHandler) GetFriends(w http.ResponseWriter, r *http.Request) {
 
 func (h *FriendsHandler) SendRequest(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		Phone string `json:"phone"`
+		Username string `json:"username"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Phone == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "phone required"})
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.Username == "" {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "username required"})
 		return
 	}
-	fr, err := h.svc.SendRequest(r.Context(), body.Phone)
+	fr, err := h.svc.SendRequest(r.Context(), body.Username)
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
@@ -77,16 +77,16 @@ func (h *FriendsHandler) GetPendingRequests(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	type reqResp struct {
-		ID        string `json:"id"`
-		FromPhone string `json:"from_phone"`
-		FromID    string `json:"from_id"`
+		ID           string `json:"id"`
+		FromUsername string `json:"from_username"`
+		FromID       string `json:"from_id"`
 	}
 	out := make([]reqResp, 0, len(reqs))
 	for _, rq := range reqs {
 		out = append(out, reqResp{
-			ID:        rq.ID.String(),
-			FromPhone: rq.FromPhone,
-			FromID:    rq.FromID.String(),
+			ID:           rq.ID.String(),
+			FromUsername: rq.FromUsername,
+			FromID:       rq.FromID.String(),
 		})
 	}
 	writeJSON(w, http.StatusOK, out)

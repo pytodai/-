@@ -7,14 +7,14 @@ RETURNING *;
 SELECT * FROM invitations WHERE id = $1;
 
 -- name: GetPendingInvitationsForUser :many
-SELECT i.*, u.phone AS from_phone
+SELECT i.*, u.username AS from_username
 FROM invitations i
 JOIN users u ON u.id = i.from_id
 WHERE i.to_id = $1 AND i.status = 'pending' AND i.expires_at > now()
 ORDER BY i.created_at DESC;
 
 -- name: GetSentInvitations :many
-SELECT i.*, u.phone AS to_phone
+SELECT i.*, u.username AS to_username
 FROM invitations i
 JOIN users u ON u.id = i.to_id
 WHERE i.from_id = $1 AND i.status = 'pending' AND i.expires_at > now()

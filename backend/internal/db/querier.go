@@ -18,7 +18,7 @@ type Querier interface {
 	CreateInvitation(ctx context.Context, arg CreateInvitationParams) (Invitation, error)
 	CreatePing(ctx context.Context, arg CreatePingParams) (Ping, error)
 	CreateStatus(ctx context.Context, arg CreateStatusParams) (UserStatus, error)
-	CreateUser(ctx context.Context, phone string) (User, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	CreateVerification(ctx context.Context, arg CreateVerificationParams) (PhoneVerification, error)
 	DeleteActiveStatuses(ctx context.Context, userID uuid.UUID) error
 	DeleteCallMeFlag(ctx context.Context, userID uuid.UUID) error
@@ -31,14 +31,14 @@ type Querier interface {
 	GetActiveVerification(ctx context.Context, phone string) (PhoneVerification, error)
 	GetDeviceTokensForUser(ctx context.Context, userID uuid.UUID) ([]string, error)
 	GetFriendRequest(ctx context.Context, id uuid.UUID) (FriendRequest, error)
-	GetFriends(ctx context.Context, userID uuid.UUID) ([]User, error)
+	GetFriends(ctx context.Context, userID uuid.UUID) ([]GetFriendsRow, error)
 	GetFriendsWithStatus(ctx context.Context, userID uuid.UUID) ([]GetFriendsWithStatusRow, error)
 	GetInvitation(ctx context.Context, id uuid.UUID) (Invitation, error)
 	GetPendingInvitationsForUser(ctx context.Context, toID uuid.UUID) ([]GetPendingInvitationsForUserRow, error)
 	GetPendingRequestsForUser(ctx context.Context, toID uuid.UUID) ([]GetPendingRequestsForUserRow, error)
 	GetSentInvitations(ctx context.Context, fromID uuid.UUID) ([]GetSentInvitationsRow, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
-	GetUserByPhone(ctx context.Context, phone string) (User, error)
+	GetUserByUsername(ctx context.Context, username string) (User, error)
 	MarkVerificationUsed(ctx context.Context, id uuid.UUID) error
 	SendFriendRequest(ctx context.Context, arg SendFriendRequestParams) (FriendRequest, error)
 	UpdateFriendRequestStatus(ctx context.Context, arg UpdateFriendRequestStatusParams) (FriendRequest, error)

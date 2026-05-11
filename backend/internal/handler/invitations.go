@@ -44,20 +44,20 @@ func (h *InvitationsHandler) GetPending(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	type row struct {
-		ID       string `json:"id"`
-		FromID   string `json:"from_id"`
-		FromPhone string `json:"from_phone"`
-		Message  string `json:"message,omitempty"`
-		Activity string `json:"activity,omitempty"`
+		ID           string `json:"id"`
+		FromID       string `json:"from_id"`
+		FromUsername string `json:"from_username"`
+		Message      string `json:"message,omitempty"`
+		Activity     string `json:"activity,omitempty"`
 	}
 	out := make([]row, 0, len(invs))
 	for _, i := range invs {
 		out = append(out, row{
-			ID:       i.ID.String(),
-			FromID:   i.FromID.String(),
-			FromPhone: i.FromPhone,
-			Message:  i.Message.String,
-			Activity: i.Activity.String,
+			ID:           i.ID.String(),
+			FromID:       i.FromID.String(),
+			FromUsername: i.FromUsername,
+			Message:      i.Message.String,
+			Activity:     i.Activity.String,
 		})
 	}
 	writeJSON(w, http.StatusOK, out)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"svoboden/backend/internal/db"
@@ -20,12 +21,13 @@ func NewFriendsService(q db.Querier, apns *push.Client) *FriendsService {
 	return &FriendsService{q: q, apns: apns}
 }
 
-func (s *FriendsService) SendRequest(ctx context.Context, toPhone string) (*db.FriendRequest, error) {
+func (s *FriendsService) SendRequest(ctx context.Context, toUsername string) (*db.FriendRequest, error) {
 	callerID, err := callerUUID(ctx)
 	if err != nil {
 		return nil, err
 	}
-	target, err := s.q.GetUserByPhone(ctx, toPhone)
+	toUsername = strings.ToLower(strings.TrimSpace(toUsername))
+	target, err := s.q.GetUserByUsername(ctx, toUsername)
 	if err == sql.ErrNoRows {
 		return nil, fmt.Errorf("user not found")
 	}

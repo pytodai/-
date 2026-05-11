@@ -17,7 +17,7 @@ struct FriendRequestsView: View {
                     List(friendsVM.pendingRequests) { request in
                         HStack {
                             VStack(alignment: .leading) {
-                                Text(request.fromPhone)
+                                Text("@" + request.fromUsername)
                                     .font(.body.bold())
                                 Text("Хочет добавить вас в друзья")
                                     .font(.caption)

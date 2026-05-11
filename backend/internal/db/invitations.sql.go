@@ -164,7 +164,7 @@ func (q *Queries) GetInvitation(ctx context.Context, id uuid.UUID) (Invitation, 
 }
 
 const getPendingInvitationsForUser = `-- name: GetPendingInvitationsForUser :many
-SELECT i.id, i.from_id, i.to_id, i.message, i.status, i.activity, i.expires_at, i.created_at, i.updated_at, u.phone AS from_phone
+SELECT i.id, i.from_id, i.to_id, i.message, i.status, i.activity, i.expires_at, i.created_at, i.updated_at, u.username AS from_username
 FROM invitations i
 JOIN users u ON u.id = i.from_id
 WHERE i.to_id = $1 AND i.status = 'pending' AND i.expires_at > now()
@@ -172,16 +172,16 @@ ORDER BY i.created_at DESC
 `
 
 type GetPendingInvitationsForUserRow struct {
-	ID        uuid.UUID      `json:"id"`
-	FromID    uuid.UUID      `json:"from_id"`
-	ToID      uuid.UUID      `json:"to_id"`
-	Message   sql.NullString `json:"message"`
-	Status    string         `json:"status"`
-	Activity  sql.NullString `json:"activity"`
-	ExpiresAt time.Time      `json:"expires_at"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	FromPhone string         `json:"from_phone"`
+	ID           uuid.UUID      `json:"id"`
+	FromID       uuid.UUID      `json:"from_id"`
+	ToID         uuid.UUID      `json:"to_id"`
+	Message      sql.NullString `json:"message"`
+	Status       string         `json:"status"`
+	Activity     sql.NullString `json:"activity"`
+	ExpiresAt    time.Time      `json:"expires_at"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+	FromUsername string         `json:"from_username"`
 }
 
 func (q *Queries) GetPendingInvitationsForUser(ctx context.Context, toID uuid.UUID) ([]GetPendingInvitationsForUserRow, error) {
@@ -203,7 +203,7 @@ func (q *Queries) GetPendingInvitationsForUser(ctx context.Context, toID uuid.UU
 			&i.ExpiresAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.FromPhone,
+			&i.FromUsername,
 		); err != nil {
 			return nil, err
 		}
@@ -219,7 +219,7 @@ func (q *Queries) GetPendingInvitationsForUser(ctx context.Context, toID uuid.UU
 }
 
 const getSentInvitations = `-- name: GetSentInvitations :many
-SELECT i.id, i.from_id, i.to_id, i.message, i.status, i.activity, i.expires_at, i.created_at, i.updated_at, u.phone AS to_phone
+SELECT i.id, i.from_id, i.to_id, i.message, i.status, i.activity, i.expires_at, i.created_at, i.updated_at, u.username AS to_username
 FROM invitations i
 JOIN users u ON u.id = i.to_id
 WHERE i.from_id = $1 AND i.status = 'pending' AND i.expires_at > now()
@@ -227,16 +227,16 @@ ORDER BY i.created_at DESC
 `
 
 type GetSentInvitationsRow struct {
-	ID        uuid.UUID      `json:"id"`
-	FromID    uuid.UUID      `json:"from_id"`
-	ToID      uuid.UUID      `json:"to_id"`
-	Message   sql.NullString `json:"message"`
-	Status    string         `json:"status"`
-	Activity  sql.NullString `json:"activity"`
-	ExpiresAt time.Time      `json:"expires_at"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	ToPhone   string         `json:"to_phone"`
+	ID         uuid.UUID      `json:"id"`
+	FromID     uuid.UUID      `json:"from_id"`
+	ToID       uuid.UUID      `json:"to_id"`
+	Message    sql.NullString `json:"message"`
+	Status     string         `json:"status"`
+	Activity   sql.NullString `json:"activity"`
+	ExpiresAt  time.Time      `json:"expires_at"`
+	CreatedAt  time.Time      `json:"created_at"`
+	UpdatedAt  time.Time      `json:"updated_at"`
+	ToUsername string         `json:"to_username"`
 }
 
 func (q *Queries) GetSentInvitations(ctx context.Context, fromID uuid.UUID) ([]GetSentInvitationsRow, error) {
@@ -258,7 +258,7 @@ func (q *Queries) GetSentInvitations(ctx context.Context, fromID uuid.UUID) ([]G
 			&i.ExpiresAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.ToPhone,
+			&i.ToUsername,
 		); err != nil {
 			return nil, err
 		}

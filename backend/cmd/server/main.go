@@ -126,8 +126,8 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("ok"))
 	})
-	r.Post("/auth/phone/request", authH.RequestPhone)
-	r.Post("/auth/phone/verify", authH.VerifyPhone)
+	r.Post("/auth/register", authH.Register)
+	r.Post("/auth/login", authH.Login)
 
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.JWTMiddleware(cfg.JWTSecret))
