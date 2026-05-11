@@ -35,12 +35,7 @@ final class WebSocketService {
 
     func connect() {
         guard let token = KeychainService.loadToken() else { return }
-        #if DEBUG
-        let baseWS = "ws://localhost:8080/ws"
-        #else
-        let baseWS = "wss://api.artem.sokolov.me/ws"
-        #endif
-        guard let url = URL(string: baseWS) else { return }
+        guard let url = URL(string: "wss://api.artem.sokolov.me/ws") else { return }
         var req = URLRequest(url: url)
         req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         task = URLSession.shared.webSocketTask(with: req)

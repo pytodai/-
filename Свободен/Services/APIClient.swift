@@ -19,13 +19,8 @@ enum APIError: Error, LocalizedError {
 actor APIClient {
     static let shared = APIClient()
 
-    #if DEBUG
-    private let baseURL = URL(string: "http://localhost:8080")!
-    private let wsURL = URL(string: "ws://localhost:8080")!
-    #else
     private let baseURL = URL(string: "https://api.artem.sokolov.me")!
     private let wsURL = URL(string: "wss://api.artem.sokolov.me")!
-    #endif
 
     private var decoder: JSONDecoder {
         let d = JSONDecoder()
