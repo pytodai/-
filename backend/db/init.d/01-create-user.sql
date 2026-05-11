@@ -1,0 +1,2 @@
+-- This file is executed as the postgres user during initialization
+-- The user svoboden is already created by POSTGRES_USER env var, but we'll ensure permissions

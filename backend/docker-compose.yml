@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: svoboden
+      POSTGRES_PASSWORD: svoboden
+      POSTGRES_DB: svoboden
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "password_encryption=md5"
+volumes:
+  pgdata:

@@ -1,24 +1,7 @@
-//
-//  ContentView.swift
-//  Свободен
-//
-//  Created by Artem Sokolov on 5/11/26.
-//
-
 import SwiftUI
 
+// Not used — app entry is ________App.swift
+@available(*, unavailable)
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
-
-#Preview {
-    ContentView()
+    var body: some View { EmptyView() }
 }

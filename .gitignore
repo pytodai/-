@@ -1,0 +1,19 @@
+# Backend
+backend/.env
+backend/backend
+
+# iOS
+Свободен.xcodeproj/xcuserdata/
+Свободен.xcodeproj/project.xcworkspace/xcuserdata/
+DerivedData/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+.build/
+
+# Go
+*.test
+*.out
+
+# macOS
+.DS_Store
