@@ -6,6 +6,7 @@ final class AppViewModel {
     var isAuthenticated = false
     var currentStatus: UserStatus? = nil
     var isLoadingStatus = false
+    let ws = WebSocketService()
 
     init() {
         isAuthenticated = KeychainService.loadToken() != nil
@@ -14,10 +15,12 @@ final class AppViewModel {
     func onLogin(token: String) {
         KeychainService.saveToken(token)
         isAuthenticated = true
+        ws.connect()
         Task { await refreshStatus() }
     }
 
     func logout() {
+        ws.disconnect()
         KeychainService.deleteToken()
         isAuthenticated = false
         currentStatus = nil

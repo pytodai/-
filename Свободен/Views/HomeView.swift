@@ -2,6 +2,24 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(AppViewModel.self) private var appVM
+
+    var body: some View {
+        TabView {
+            StatusTabView()
+                .tabItem {
+                    Label("Статус", systemImage: "hand.wave.fill")
+                }
+
+            FriendsView(ws: appVM.ws)
+                .tabItem {
+                    Label("Друзья", systemImage: "person.2.fill")
+                }
+        }
+    }
+}
+
+struct StatusTabView: View {
+    @Environment(AppViewModel.self) private var appVM
     @State private var locationService = LocationService()
     @State private var showSetStatus = false
     @State private var statusVM: StatusViewModel? = nil

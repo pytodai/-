@@ -10,10 +10,16 @@ import (
 	"svoboden/backend/internal/db"
 	"svoboden/backend/internal/geocode"
 	"svoboden/backend/internal/middleware"
+	"svoboden/backend/internal/ws"
 )
 
 type StatusService struct {
-	q db.Querier
+	q   db.Querier
+	hub *ws.Hub
+}
+
+func (s *StatusService) SetHub(h *ws.Hub) {
+	s.hub = h
 }
 
 func NewStatusService(q db.Querier) *StatusService {
@@ -87,6 +93,17 @@ func (s *StatusService) SetStatus(ctx context.Context, params SetStatusParams) (
 	if err != nil {
 		return nil, err
 	}
+	if s.hub != nil {
+		_ = s.hub.Publish(ctx, ws.Message{
+			Type:   "status_set",
+			UserID: uid.String(),
+			Data: map[string]any{
+				"expires_at":  status.ExpiresAt.UTC().Format("2006-01-02T15:04:05Z"),
+				"activities": status.Activities,
+				"district":   status.District.String,
+			},
+		})
+	}
 	return &status, nil
 }
 
@@ -99,5 +116,9 @@ func (s *StatusService) ClearStatus(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("invalid user ID: %w", err)
 	}
-	return s.q.DeleteUserStatus(ctx, uid)
+	err = s.q.DeleteUserStatus(ctx, uid)
+	if err == nil && s.hub != nil {
+		_ = s.hub.Publish(ctx, ws.Message{Type: "status_cleared", UserID: uid.String()})
+	}
+	return err
 }

@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	DBUrl     string
+	RedisURL  string
 	JWTSecret string
 	Port      string
 }
@@ -17,6 +18,7 @@ func Load() (*Config, error) {
 	_ = godotenv.Load()
 	cfg := &Config{
 		DBUrl:     os.Getenv("DB_URL"),
+		RedisURL:  os.Getenv("REDIS_URL"),
 		JWTSecret: os.Getenv("JWT_SECRET"),
 		Port:      os.Getenv("PORT"),
 	}

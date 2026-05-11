@@ -11,12 +11,62 @@ import (
 	"github.com/google/uuid"
 )
 
+type CallMeFlag struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	EnabledAt time.Time `json:"enabled_at"`
+	ExpiresAt time.Time `json:"expires_at"`
+}
+
+type DeviceToken struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	Token     string    `json:"token"`
+	Platform  string    `json:"platform"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type FriendRequest struct {
+	ID        uuid.UUID `json:"id"`
+	FromID    uuid.UUID `json:"from_id"`
+	ToID      uuid.UUID `json:"to_id"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type Friendship struct {
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	FriendID  uuid.UUID `json:"friend_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type Invitation struct {
+	ID        uuid.UUID      `json:"id"`
+	FromID    uuid.UUID      `json:"from_id"`
+	ToID      uuid.UUID      `json:"to_id"`
+	Message   sql.NullString `json:"message"`
+	Status    string         `json:"status"`
+	Activity  sql.NullString `json:"activity"`
+	ExpiresAt time.Time      `json:"expires_at"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+}
+
 type PhoneVerification struct {
 	ID        uuid.UUID `json:"id"`
 	Phone     string    `json:"phone"`
 	Code      string    `json:"code"`
 	ExpiresAt time.Time `json:"expires_at"`
 	Used      bool      `json:"used"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type Ping struct {
+	ID        uuid.UUID `json:"id"`
+	FromID    uuid.UUID `json:"from_id"`
+	ToID      uuid.UUID `json:"to_id"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

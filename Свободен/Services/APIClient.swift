@@ -62,6 +62,39 @@ actor APIClient {
         try await deleteReq(path: "/me/status", token: token)
     }
 
+    // MARK: - Friends
+
+    func getFriends() async throws -> [Friend] {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        return try await get(path: "/friends", token: token)
+    }
+
+    func sendFriendRequest(phone: String) async throws {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        let body = ["phone": phone]
+        _ = try await post(path: "/friends/requests", body: body, token: token) as [String: String]
+    }
+
+    func getPendingRequests() async throws -> [FriendRequest] {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        return try await get(path: "/friends/requests", token: token)
+    }
+
+    func acceptRequest(id: String) async throws {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        try await postNoContent(path: "/friends/requests/\(id)/accept", token: token)
+    }
+
+    func declineRequest(id: String) async throws {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        try await postNoContent(path: "/friends/requests/\(id)/decline", token: token)
+    }
+
+    func removeFriend(id: String) async throws {
+        guard let token = KeychainService.loadToken() else { throw APIError.notAuthenticated }
+        try await deleteReq(path: "/friends/\(id)", token: token)
+    }
+
     private func get<T: Decodable>(path: String, token: String?) async throws -> T {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "GET"
@@ -90,6 +123,17 @@ actor APIClient {
     private func deleteReq(path: String, token: String?) async throws {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "DELETE"
+        if let token { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        let (_, response) = try await URLSession.shared.data(for: req)
+        if let http = response as? HTTPURLResponse, http.statusCode >= 400 {
+            throw APIError.httpError(http.statusCode, "")
+        }
+    }
+
+    // Workaround for 204 No Content responses where we don't need a body
+    private func postNoContent(path: String, token: String?) async throws {
+        var req = URLRequest(url: baseURL.appendingPathComponent(path))
+        req.httpMethod = "POST"
         if let token { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         let (_, response) = try await URLSession.shared.data(for: req)
         if let http = response as? HTTPURLResponse, http.statusCode >= 400 {

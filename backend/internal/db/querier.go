@@ -12,17 +12,39 @@ import (
 )
 
 type Querier interface {
+	AreFriends(ctx context.Context, arg AreFriendsParams) (bool, error)
+	CountPingsFromUser(ctx context.Context, fromID uuid.UUID) (int64, error)
+	CreateFriendship(ctx context.Context, arg CreateFriendshipParams) error
+	CreateInvitation(ctx context.Context, arg CreateInvitationParams) (Invitation, error)
+	CreatePing(ctx context.Context, arg CreatePingParams) (Ping, error)
 	CreateStatus(ctx context.Context, arg CreateStatusParams) (UserStatus, error)
 	CreateUser(ctx context.Context, phone string) (User, error)
 	CreateVerification(ctx context.Context, arg CreateVerificationParams) (PhoneVerification, error)
 	DeleteActiveStatuses(ctx context.Context, userID uuid.UUID) error
+	DeleteCallMeFlag(ctx context.Context, userID uuid.UUID) error
+	DeleteDeviceToken(ctx context.Context, token string) error
 	DeleteExpiredOlderThan(ctx context.Context, expiresAt time.Time) error
+	DeleteFriendship(ctx context.Context, arg DeleteFriendshipParams) error
 	DeleteUserStatus(ctx context.Context, userID uuid.UUID) error
+	GetActiveCallMeFlag(ctx context.Context, userID uuid.UUID) (CallMeFlag, error)
 	GetActiveStatus(ctx context.Context, userID uuid.UUID) (UserStatus, error)
 	GetActiveVerification(ctx context.Context, phone string) (PhoneVerification, error)
+	GetDeviceTokensForUser(ctx context.Context, userID uuid.UUID) ([]string, error)
+	GetFriendRequest(ctx context.Context, id uuid.UUID) (FriendRequest, error)
+	GetFriends(ctx context.Context, userID uuid.UUID) ([]User, error)
+	GetFriendsWithStatus(ctx context.Context, userID uuid.UUID) ([]GetFriendsWithStatusRow, error)
+	GetInvitation(ctx context.Context, id uuid.UUID) (Invitation, error)
+	GetPendingInvitationsForUser(ctx context.Context, toID uuid.UUID) ([]GetPendingInvitationsForUserRow, error)
+	GetPendingRequestsForUser(ctx context.Context, toID uuid.UUID) ([]GetPendingRequestsForUserRow, error)
+	GetSentInvitations(ctx context.Context, fromID uuid.UUID) ([]GetSentInvitationsRow, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByPhone(ctx context.Context, phone string) (User, error)
 	MarkVerificationUsed(ctx context.Context, id uuid.UUID) error
+	SendFriendRequest(ctx context.Context, arg SendFriendRequestParams) (FriendRequest, error)
+	UpdateFriendRequestStatus(ctx context.Context, arg UpdateFriendRequestStatusParams) (FriendRequest, error)
+	UpdateInvitationStatus(ctx context.Context, arg UpdateInvitationStatusParams) (Invitation, error)
+	UpsertCallMeFlag(ctx context.Context, userID uuid.UUID) error
+	UpsertDeviceToken(ctx context.Context, arg UpsertDeviceTokenParams) error
 }
 
 var _ Querier = (*Queries)(nil)

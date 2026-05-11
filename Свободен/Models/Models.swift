@@ -1,5 +1,38 @@
 import Foundation
 
+// MARK: - Friends
+
+struct Friend: Codable, Identifiable {
+    let id: String
+    let phone: String
+    let statusId: String?
+    let expiresAt: Date?
+    let activities: [String]?
+    let district: String?
+
+    var hasActiveStatus: Bool { statusId != nil }
+
+    enum CodingKeys: String, CodingKey {
+        case id, phone, district, activities
+        case statusId  = "status_id"
+        case expiresAt = "expires_at"
+    }
+}
+
+struct FriendRequest: Codable, Identifiable {
+    let id: String
+    let fromPhone: String
+    let fromId: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case fromPhone = "from_phone"
+        case fromId    = "from_id"
+    }
+}
+
+// MARK: - Status
+
 struct UserStatus: Codable, Identifiable {
     let id: String
     let expiresAt: Date

@@ -30,10 +30,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		ACEED8D12FB22163009A9282 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		ACEED8D12FB22163009A9282 /* Exceptions for "Свободен" folder in "Свободен" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Info.plist",
+				Info.plist,
 			);
 			target = ACEED8A52FB22163009A9282 /* Свободен */;
 		};
@@ -43,7 +43,7 @@
 		ACEED8A82FB22163009A9282 /* Свободен */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				ACEED8D12FB22163009A9282 /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+				ACEED8D12FB22163009A9282 /* Exceptions for "Свободен" folder in "Свободен" target */,
 			);
 			path = "Свободен";
 			sourceTree = "<group>";
@@ -424,7 +424,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.sokolov.svoboden";
+				PRODUCT_BUNDLE_IDENTIFIER = me.sokolov.svoboden;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -457,7 +457,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "me.sokolov.svoboden";
+				PRODUCT_BUNDLE_IDENTIFIER = me.sokolov.svoboden;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
