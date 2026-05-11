@@ -4,34 +4,21 @@ struct OnboardingPage {
     let icon: String
     let title: String
     let subtitle: String
-    let color: Color
 }
 
 private let pages: [OnboardingPage] = [
-    OnboardingPage(
-        icon: "hand.wave.fill",
-        title: "Скажи, что свободен",
-        subtitle: "Одним нажатием сообщи друзьям, что ты готов встретиться прямо сейчас",
-        color: .accentColor
-    ),
-    OnboardingPage(
-        icon: "person.2.fill",
-        title: "Видишь, кто свободен",
-        subtitle: "Лента показывает твоих друзей с обратным отсчётом — никаких созвонов",
-        color: .green
-    ),
-    OnboardingPage(
-        icon: "paperplane.fill",
-        title: "Зови на встречу",
-        subtitle: "Отправь приглашение другу с предложением куда пойти — он примет или отклонит",
-        color: .orange
-    ),
-    OnboardingPage(
-        icon: "location.fill",
-        title: "Делись районом",
-        subtitle: "Опционально — друзья увидят в каком районе ты сейчас, без точного адреса",
-        color: .blue
-    ),
+    .init(icon: "hand.wave.fill",
+          title: "Скажи, что свободен",
+          subtitle: "Одно нажатие — и друзья знают, что ты готов встретиться прямо сейчас"),
+    .init(icon: "person.2.fill",
+          title: "Видишь, кто свободен",
+          subtitle: "Лента показывает друзей с обратным отсчётом — без лишних созвонов"),
+    .init(icon: "paperplane.fill",
+          title: "Зови на встречу",
+          subtitle: "Отправь приглашение с предложением куда пойти — друг примет или отклонит"),
+    .init(icon: "location.fill",
+          title: "Делись районом",
+          subtitle: "Опционально — друзья увидят в каком районе ты, без точного адреса"),
 ]
 
 struct OnboardingView: View {
@@ -39,67 +26,84 @@ struct OnboardingView: View {
     @State private var currentPage = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            TabView(selection: $currentPage) {
-                ForEach(pages.indices, id: \.self) { i in
-                    pageView(pages[i]).tag(i)
-                }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .animation(.easeInOut, value: currentPage)
+        ZStack {
+            AuroraBackground()
 
-            HStack(spacing: 8) {
-                ForEach(pages.indices, id: \.self) { i in
-                    Capsule()
-                        .fill(i == currentPage ? Color.accentColor : Color.secondary.opacity(0.3))
-                        .frame(width: i == currentPage ? 20 : 8, height: 8)
-                        .animation(.spring(duration: 0.3), value: currentPage)
+            VStack(spacing: 0) {
+                TabView(selection: $currentPage) {
+                    ForEach(pages.indices, id: \.self) { i in
+                        pageView(pages[i], index: i).tag(i)
+                    }
                 }
-            }
-            .padding(.bottom, 24)
+                .tabViewStyle(.page(indexDisplayMode: .never))
 
-            Button {
-                if currentPage < pages.count - 1 {
-                    withAnimation { currentPage += 1 }
-                } else {
-                    isOnboardingDone = true
+                HStack(spacing: Theme.s2) {
+                    ForEach(pages.indices, id: \.self) { i in
+                        Capsule()
+                            .fill(i == currentPage
+                                  ? AnyShapeStyle(Theme.primaryGradient)
+                                  : AnyShapeStyle(Color.secondary.opacity(0.3)))
+                            .frame(width: i == currentPage ? 26 : 8, height: 8)
+                            .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentPage)
+                    }
                 }
-            } label: {
-                Text(currentPage < pages.count - 1 ? "Далее" : "Начать")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.accentColor)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(.bottom, Theme.s5)
+
+                Button {
+                    Haptics.tap()
+                    if currentPage < pages.count - 1 {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                            currentPage += 1
+                        }
+                    } else {
+                        Haptics.success()
+                        withAnimation { isOnboardingDone = true }
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Text(currentPage < pages.count - 1 ? "Далее" : "Начать")
+                        if currentPage < pages.count - 1 {
+                            Image(systemName: "arrow.right")
+                        }
+                    }
+                }
+                .buttonStyle(GradientButtonStyle())
+                .padding(.horizontal, Theme.s6)
+                .padding(.bottom, 48)
             }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 48)
         }
     }
 
-    private func pageView(_ page: OnboardingPage) -> some View {
-        VStack(spacing: 32) {
+    private func pageView(_ page: OnboardingPage, index: Int) -> some View {
+        VStack(spacing: Theme.s6) {
             Spacer()
 
             ZStack {
                 Circle()
-                    .fill(page.color.opacity(0.15))
-                    .frame(width: 160, height: 160)
+                    .fill(Theme.auroraGradient.opacity(0.18))
+                    .frame(width: 200, height: 200)
+                    .blur(radius: 12)
+                Circle()
+                    .stroke(Theme.coral.opacity(0.25), lineWidth: 1.5)
+                    .frame(width: 180, height: 180)
+                Circle()
+                    .fill(Theme.primaryGradient)
+                    .frame(width: 140, height: 140)
+                    .shadow(color: Theme.coral.opacity(0.45), radius: 30, x: 0, y: 18)
                 Image(systemName: page.icon)
-                    .font(.system(size: 64))
-                    .foregroundStyle(page.color)
+                    .font(.system(size: 60, weight: .bold))
+                    .foregroundStyle(.white)
             }
 
-            VStack(spacing: 12) {
+            VStack(spacing: Theme.s3) {
                 Text(page.title)
-                    .font(.title.bold())
+                    .font(.displayMedium)
                     .multilineTextAlignment(.center)
                 Text(page.subtitle)
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
+                    .padding(.horizontal, Theme.s5)
             }
 
             Spacer()

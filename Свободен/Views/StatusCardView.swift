@@ -10,41 +10,55 @@ struct StatusCardView: View {
             let hours   = Int(remaining) / 3600
             let minutes = (Int(remaining) % 3600) / 60
             let seconds = Int(remaining) % 60
+            let urgent  = remaining < 600
 
-            VStack(spacing: 16) {
-                HStack {
-                    Image(systemName: "clock.fill").foregroundStyle(.green)
-                    Text("Ты свободен").font(.headline)
+            VStack(alignment: .leading, spacing: Theme.s4) {
+                HStack(spacing: Theme.s2) {
+                    Circle()
+                        .fill(Theme.mint)
+                        .frame(width: 10, height: 10)
+                        .shadow(color: Theme.mint.opacity(0.6), radius: 6)
+                    Text("Ты свободен")
+                        .font(.bodyStrong)
+                        .foregroundStyle(.secondary)
                     Spacer()
-                    Button(role: .destructive) {
+                    Button {
                         Task { await onClear() }
                     } label: {
-                        Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(.secondary)
+                            .padding(8)
+                            .background(Circle().fill(Color.primary.opacity(0.06)))
                     }
                 }
 
                 Text(String(format: "%02d:%02d:%02d", hours, minutes, seconds))
-                    .font(.system(size: 52, weight: .bold, design: .monospaced))
-                    .foregroundStyle(remaining < 600 ? .red : .primary)
+                    .font(.system(size: 56, weight: .black, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(urgent ? AnyShapeStyle(Color.red) : AnyShapeStyle(Theme.sunsetGradient))
+                    .contentTransition(.numericText())
 
                 if !status.activities.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: Theme.s2) {
                             ForEach(status.activities, id: \.self) { act in
-                                HStack(spacing: 4) {
-                                    if let activity = Activity(rawValue: act) {
+                                let activity = Activity(rawValue: act)
+                                HStack(spacing: 6) {
+                                    if let activity {
                                         Image(systemName: activity.icon)
+                                            .font(.system(size: 12, weight: .bold))
                                     }
                                     Text(act)
+                                        .font(.subheadline.weight(.semibold))
                                 }
-                                .font(.caption)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color.accentColor.opacity(0.15))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, Theme.s3)
+                                .padding(.vertical, 8)
+                                .background(Theme.auroraGradient)
                                 .clipShape(Capsule())
                             }
                         }
-                        .padding(.horizontal, 4)
                     }
                 }
 
@@ -54,9 +68,7 @@ struct StatusCardView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding()
-            .background(Color(.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .glassCard(padding: Theme.s5)
         }
     }
 }

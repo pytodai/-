@@ -12,7 +12,6 @@ import SwiftUI
 struct SvobodenWidgetBundle: WidgetBundle {
     var body: some Widget {
         SvobodenWidget()
-        SvobodenWidgetControl()
         SvobodenWidgetLiveActivity()
     }
 }
