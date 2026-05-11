@@ -15,18 +15,16 @@ import (
 )
 
 const createStatus = `-- name: CreateStatus :one
-INSERT INTO user_statuses (user_id, expires_at, activities, lat, lon, district)
-VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, user_id, expires_at, activities, lat, lon, district, created_at
+INSERT INTO user_statuses (user_id, expires_at, activities, district)
+VALUES ($1, $2, $3, $4)
+RETURNING id, user_id, expires_at, activities, district, created_at
 `
 
 type CreateStatusParams struct {
-	UserID     uuid.UUID       `json:"user_id"`
-	ExpiresAt  time.Time       `json:"expires_at"`
-	Activities []string        `json:"activities"`
-	Lat        sql.NullFloat64 `json:"lat"`
-	Lon        sql.NullFloat64 `json:"lon"`
-	District   sql.NullString  `json:"district"`
+	UserID     uuid.UUID      `json:"user_id"`
+	ExpiresAt  time.Time      `json:"expires_at"`
+	Activities []string       `json:"activities"`
+	District   sql.NullString `json:"district"`
 }
 
 func (q *Queries) CreateStatus(ctx context.Context, arg CreateStatusParams) (UserStatus, error) {
@@ -34,8 +32,6 @@ func (q *Queries) CreateStatus(ctx context.Context, arg CreateStatusParams) (Use
 		arg.UserID,
 		arg.ExpiresAt,
 		pq.Array(arg.Activities),
-		arg.Lat,
-		arg.Lon,
 		arg.District,
 	)
 	var i UserStatus
@@ -44,8 +40,6 @@ func (q *Queries) CreateStatus(ctx context.Context, arg CreateStatusParams) (Use
 		&i.UserID,
 		&i.ExpiresAt,
 		pq.Array(&i.Activities),
-		&i.Lat,
-		&i.Lon,
 		&i.District,
 		&i.CreatedAt,
 	)
@@ -82,7 +76,7 @@ func (q *Queries) DeleteUserStatus(ctx context.Context, userID uuid.UUID) error 
 }
 
 const getActiveStatus = `-- name: GetActiveStatus :one
-SELECT id, user_id, expires_at, activities, lat, lon, district, created_at FROM user_statuses
+SELECT id, user_id, expires_at, activities, district, created_at FROM user_statuses
 WHERE user_id = $1
   AND expires_at > now()
 ORDER BY created_at DESC
@@ -97,8 +91,6 @@ func (q *Queries) GetActiveStatus(ctx context.Context, userID uuid.UUID) (UserSt
 		&i.UserID,
 		&i.ExpiresAt,
 		pq.Array(&i.Activities),
-		&i.Lat,
-		&i.Lon,
 		&i.District,
 		&i.CreatedAt,
 	)

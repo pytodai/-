@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
 	"svoboden/backend/internal/db"
 	"svoboden/backend/internal/geocode"
 	"svoboden/backend/internal/middleware"
@@ -76,13 +77,7 @@ func (s *StatusService) SetStatus(ctx context.Context, params SetStatusParams) (
 		Activities: acts,
 	}
 
-	if params.Lat != nil {
-		createParams.Lat = sql.NullFloat64{Float64: *params.Lat, Valid: true}
-	}
-	if params.Lon != nil {
-		createParams.Lon = sql.NullFloat64{Float64: *params.Lon, Valid: true}
-	}
-
+	// Точные координаты не сохраняем — только название района через обратный геокод.
 	if params.Lat != nil && params.Lon != nil {
 		if d := geocode.ReverseGeocode(ctx, *params.Lat, *params.Lon); d != "" {
 			createParams.District = sql.NullString{String: d, Valid: true}

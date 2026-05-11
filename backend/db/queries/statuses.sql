@@ -6,8 +6,8 @@ ORDER BY created_at DESC
 LIMIT 1;
 
 -- name: CreateStatus :one
-INSERT INTO user_statuses (user_id, expires_at, activities, lat, lon, district)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO user_statuses (user_id, expires_at, activities, district)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: DeleteActiveStatuses :exec

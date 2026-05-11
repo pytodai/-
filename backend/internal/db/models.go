@@ -79,12 +79,10 @@ type User struct {
 }
 
 type UserStatus struct {
-	ID         uuid.UUID       `json:"id"`
-	UserID     uuid.UUID       `json:"user_id"`
-	ExpiresAt  time.Time       `json:"expires_at"`
-	Activities []string        `json:"activities"`
-	Lat        sql.NullFloat64 `json:"lat"`
-	Lon        sql.NullFloat64 `json:"lon"`
-	District   sql.NullString  `json:"district"`
-	CreatedAt  time.Time       `json:"created_at"`
+	ID         uuid.UUID      `json:"id"`
+	UserID     uuid.UUID      `json:"user_id"`
+	ExpiresAt  time.Time      `json:"expires_at"`
+	Activities []string       `json:"activities"`
+	District   sql.NullString `json:"district"`
+	CreatedAt  time.Time      `json:"created_at"`
 }
